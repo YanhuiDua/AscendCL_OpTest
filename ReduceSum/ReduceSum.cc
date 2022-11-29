@@ -18,16 +18,16 @@ int main() {
   const std::string op_type = "ReduceSum";
 
   // input - X
-  const std::vector<int64_t> x_dims{3, 2, 3, 2};
-  std::vector<float> x_data(36);
-  std::iota(x_data.begin(), x_data.end(), 0);
+  const std::vector<int64_t> x_dims{1, 3, 76, 156};
+  std::vector<float> x_data(35568,1);
+  // std::iota(x_data.begin(), x_data.end(), 0);
   // input - axes
-  const std::vector<int64_t> a_dims{1};
-  const std::vector<int64_t> axes{1};
+  const std::vector<int64_t> a_dims{2};
+  const std::vector<int64_t> axes{2,3};
   // attr
-  const bool keep_dims = true;
+  const bool keep_dims = false;
   // output - y
-  const std::vector<int64_t> y_dims{3, 1, 3, 2};
+  const std::vector<int64_t> y_dims{1,3};
 
   // input - x
   auto x = new npuTensor<float>(ACL_FLOAT, x_dims.size(), x_dims.data(), ACL_FORMAT_NCHW, x_data.data());
@@ -69,7 +69,7 @@ int main() {
   ACL_CALL(aclrtDestroyStream(stream));
 
   // print output
-  x->Print("x");
+  // x->Print("x");
   y->Print("y");
 
   // destroy - inputs
