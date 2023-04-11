@@ -18,13 +18,14 @@ int main() {
   const std::string op_type = "ScatterUpdate";
   // input - var
   const std::vector<int64_t> var_dims{24};
-  std::vector<float> var_data(24, 1);
+  std::vector<float> var_data(24,1);
+
+  const std::vector<int64_t> indices_dims{4};
+  std::vector<int64_t> indices_data{0,1,2,3};
+  
   // input - value
-  const std::vector<int64_t> indices_dims{12};
-  std::vector<int64_t> indices_data{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-  // input - value
-  const std::vector<int64_t> updates_dims{12};
-  std::vector<float> updates_data(12, 6);
+  const std::vector<int64_t> updates_dims{4};
+  std::vector<float> updates_data{6,6,6,6};
   // output
   const std::vector<int64_t> y_dims{24};
 
@@ -40,14 +41,14 @@ int main() {
   input_buffers.emplace_back(input_var->buffer);
   input_buffers.emplace_back(input_indices->buffer);
   input_buffers.emplace_back(input_updates->buffer);
-
+  input_var->Print("var");
   // output
   auto output_y = new npuTensor<float>(ACL_FLOAT, y_dims.size(), y_dims.data(), ACL_FORMAT_ND, nullptr);
   // set output desc and buffer
   std::vector<aclTensorDesc *> output_descs;
   std::vector<aclDataBuffer *> output_buffers;
-  output_descs.emplace_back(output_y->desc);
-  output_buffers.emplace_back(output_y->buffer);
+  output_descs.emplace_back(input_var->desc);
+  output_buffers.emplace_back(input_var->buffer);
   
   // attributes
   auto attr = aclopCreateAttr();
@@ -68,7 +69,11 @@ int main() {
   ACL_CALL(aclrtDestroyStream(stream));
 
   // print output
-  output_y->Print("y");
+  
+  input_indices->Print("input_indices");
+  input_updates->Print("input_updates");
+  input_var->Print("var");
+  // output_y->Print("y");
 
   // destroy
   input_var->Destroy();
