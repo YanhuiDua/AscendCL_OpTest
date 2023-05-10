@@ -17,17 +17,17 @@ int main() {
   // op type
   const std::string op_type = "StridedSliceAssignD";
   // input - var
-  const std::vector<int64_t> var_dims{8, 8};
-  std::vector<float> var_data(64, 1);
+  const std::vector<int64_t> var_dims{1000001, 1, 8};
+  std::vector<float> var_data(32000032, 1);
   // input - value
-  const std::vector<int64_t> value_dims{8, 8};
-  std::vector<float> value_data(64, 2);
+  const std::vector<int64_t> value_dims{1,1, 8};
+  std::vector<float> value_data{0,0,0,0,0,0,0,0};
   // output
-  const std::vector<int64_t> y_dims{8, 8};
+  const std::vector<int64_t> y_dims{1000001, 1, 8};
   // attrs
-  const std::vector<int64_t> begin{0, 0};
-  const std::vector<int64_t> end{8, 8};
-  const std::vector<int64_t> strides{1, 1};
+  const std::vector<int64_t> begin{0,0, 0};
+  const std::vector<int64_t> end{1,1, 8};
+  const std::vector<int64_t> strides{1, 1,1};
 
   // inputs
   auto input_var = new npuTensor<float>(ACL_FLOAT, var_dims.size(), var_dims.data(), ACL_FORMAT_ND, var_data.data());
@@ -54,8 +54,8 @@ int main() {
   // set output desc and buffer
   std::vector<aclTensorDesc *> output_descs;
   std::vector<aclDataBuffer *> output_buffers;
-  output_descs.emplace_back(output_y->desc);
-  output_buffers.emplace_back(output_y->buffer);
+  output_descs.emplace_back(input_var->desc);
+  output_buffers.emplace_back(input_var->buffer);
   
   // attributes
   auto attr = aclopCreateAttr();
@@ -83,7 +83,7 @@ int main() {
   ACL_CALL(aclrtDestroyStream(stream));
 
   // print output
-  output_y->Print("y");
+  // output_y->Print("y");
 
   // destroy
   input_var->Destroy();
